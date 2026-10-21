@@ -42,14 +42,14 @@
 
 // Sozlamalar: mijoz ma'lumoti kelganda shu yerni to'ldiring
 var SOZLAMA = {
-  telefon: '+998990575335',  // SMS va qo'ng'iroq uchun
+  telefon: '+998501765025',  // SMS va qo'ng'iroq uchun
   telegram: '',              // masalan 'shuxratogli' (@ belgisisiz) — bo'sh bo'lsa tugma ko'rinmaydi
   instagram: '',             // masalan 'shuxratogli'
   // Yandex Maps JS API 2.1 kaliti («JavaScript API и HTTP Геокодер», developer.tech.yandex.ru).
   // Kalit sahifa kodida ochiq turadi — Yandex kabinetida uni sayt domeniga cheklang.
   // Bo'sh bo'lsa xarita o'rnida brend kartochkasi turadi.
   yandexKalit: '868c338e-c07c-4bf9-9adc-8f86a7625381',
-  xarita: { lat: 40.6415, lng: 72.2387, zoom: 12 }  // xo'jalikning aniq nuqtasi bilan almashtiring
+  xarita: { lat: 40.595514, lng: 72.239171, zoom: 13 }  // xo'jalikning haqiqiy nuqtasi (egasi, 21.10)
 };
 
 (function () {
@@ -144,7 +144,7 @@ var SOZLAMA = {
   if (!quti) return;
   var x = SOZLAMA.xarita;
   var och = quti.querySelector('.xarita-och'), yol = quti.querySelector('.xarita-yol');
-  if (och) och.href = 'https://yandex.uz/maps/?pt=' + x.lng + ',' + x.lat + '&z=' + (x.zoom + 1) + '&l=map';
+  if (och) och.href = 'https://yandex.uz/maps/?pt=' + x.lng + ',' + x.lat + '&z=16&l=map';
   if (yol) yol.href = 'https://yandex.uz/maps/?rtext=~' + x.lat + ',' + x.lng + '&rtt=auto';
   if (!SOZLAMA.yandexKalit) return;
 
