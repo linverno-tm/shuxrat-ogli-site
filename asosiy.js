@@ -79,6 +79,41 @@ var SOZLAMA = {
   var nusxa = forma.querySelector('.ariza-nusxa');
   var nusxalandi = forma.querySelector('.ariza-nusxalandi');
 
+  // Raqam filtrlari: telefon → «+998 99 107 55 08», katta sonlar → «1 000 000»
+  function telFormat(v) {
+    var r = v.replace(/\D/g, '');
+    if (!r) return v.trim().charAt(0) === '+' ? '+' : '';
+    if (r.indexOf('998998') === 0) r = r.slice(3);                  // avtomatik +998 dan keyin yana 998 yozilsa
+    if (r.length <= 9 && r.indexOf('998') !== 0) r = '998' + r;   // 991075508 → 998991075508
+    if (r.indexOf('998') !== 0) return '+' + r;                     // boshqa davlat — faqat «+»
+    r = r.slice(0, 12);
+    var q = [r.slice(0, 3), r.slice(3, 5), r.slice(5, 8), r.slice(8, 10), r.slice(10, 12)];
+    return '+' + q.filter(Boolean).join(' ');
+  }
+  function sonFormat(v) {
+    // Guruh bo'shlig'i — NBSP (\u00A0): ko'rinishi oddiy bo'shliq, lekin filtr uni o'zinikidek taniydi,
+    // shuning uchun yozish va o'chirishda son har doim to'g'ri qayta guruhlanadi: «1000000» → «1 000 000».
+    return v.replace(/\d(?:[\d\u00A0]*\d)?/g, function (s) {
+      var r = s.replace(/\u00A0/g, '');
+      return r.length < 4 ? r : r.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0');
+    });
+  }
+  function filtr(el, fn, faqatYozganda) {
+    el.addEventListener('input', function (e) {
+      if (faqatYozganda && e.inputType && e.inputType.indexOf('delete') === 0) return;  // o'chirishga xalaqit bermasin
+      var oxirida = el.selectionStart === el.value.length;
+      var yangi = fn(el.value);
+      if (yangi !== el.value) {
+        el.value = yangi;
+        if (oxirida) el.setSelectionRange(yangi.length, yangi.length);
+      }
+    });
+    el.addEventListener('blur', function () { el.value = fn(el.value); });
+  }
+  filtr(forma.elements.tel, telFormat, true);
+  filtr(forma.elements.hajm, sonFormat);
+  filtr(forma.elements.izoh, sonFormat);
+
   function yorliq(el) {
     var l = el.closest('label');
     var s = l && l.querySelector('span');
