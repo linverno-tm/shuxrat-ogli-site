@@ -217,3 +217,25 @@ var SOZLAMA = {
     quti.classList.add('jonli');
   }
 })();
+
+// Telefon raqamlari: telefonda — to'g'ridan-to'g'ri qo'ng'iroq oynasi; kompyuterda — raqam, nusxalash va QR
+(function () {
+  var oyna = document.querySelector('.qongiroq-oyna');
+  if (!oyna || !oyna.showModal) return;
+  var mobil = matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  var nusxalandi = oyna.querySelector('.qongiroq-nusxalandi');
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href^="tel:"]');
+    if (!a || mobil || a.closest('.qongiroq-oyna')) return;
+    e.preventDefault();
+    nusxalandi.hidden = true;
+    oyna.showModal();
+  });
+  oyna.querySelector('.qongiroq-yop').addEventListener('click', function () { oyna.close(); });
+  oyna.addEventListener('click', function (e) { if (e.target === oyna) oyna.close(); });  // fonga bosilsa yopiladi
+  oyna.querySelector('.qongiroq-nusxa').addEventListener('click', function () {
+    var raqam = oyna.querySelector('.qongiroq-raqam').textContent.trim();
+    var tayyor = function () { nusxalandi.hidden = false; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(raqam).then(tayyor, function () {});
+  });
+})();

@@ -447,6 +447,26 @@ a { color: inherit; }
 .ijtimoiy:hover { border-color: var(--oltin); color: var(--oltin); }
 .ijtimoiy svg { width: 20px; height: 20px; fill: currentColor; }
 
+/* Kompyuterdagi qo'ng'iroq oynasi */
+.qongiroq-oyna {
+  width: min(92vw, 400px); padding: 32px 28px 28px; border: 0; border-radius: 24px;
+  text-align: center; color: var(--matn); background: var(--oq);
+  box-shadow: 0 30px 80px -20px rgba(10, 20, 60, .5);
+}
+.qongiroq-oyna::backdrop { background: rgba(23, 43, 102, .55); backdrop-filter: blur(3px); }
+.qongiroq-oyna h2 { font-size: 24px; margin-bottom: 10px; }
+.qongiroq-raqam { display: block; font-size: 30px; font-weight: 900; letter-spacing: -0.02em; color: var(--kok); text-decoration: none; }
+.qongiroq-qr { display: block; width: 180px; height: 180px; margin: 20px auto 12px; padding: 10px; border: 3px solid var(--oltin); border-radius: 18px; }
+.qongiroq-oyna > p { color: var(--xira); font-size: 15px; margin-bottom: 18px; }
+.qongiroq-oyna .tugmalar { justify-content: center; }
+.qongiroq-oyna .tugma { font-family: inherit; cursor: pointer; border: 0; }
+.qongiroq-oyna .tugma-chiziq { border: 2px solid var(--kok); background: transparent; }
+.qongiroq-oyna .qongiroq-nusxalandi { margin: 12px 0 0; font-weight: 700; color: var(--kok); }
+.qongiroq-yop {
+  position: absolute; right: 12px; top: 12px; width: 40px; height: 40px; border: 0; border-radius: 50%;
+  background: var(--kul); color: var(--kok); font-size: 24px; line-height: 1; cursor: pointer;
+}
+
 /* ?toldir — mijozdan keladigan ma'lumot joylarini ko'rsatish (faqat tekshiruv uchun) */
 html.toldir [data-toldir] { outline: 2px dashed var(--oltin); outline-offset: 4px; position: relative; }
 html.toldir [data-toldir]::after {
