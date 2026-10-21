@@ -39,3 +39,165 @@
     });
   }
 })();
+
+// Sozlamalar: mijoz ma'lumoti kelganda shu yerni to'ldiring
+var SOZLAMA = {
+  telefon: '+998990575335',  // SMS va qo'ng'iroq uchun
+  telegram: '',              // masalan 'shuxratogli' (@ belgisisiz) — bo'sh bo'lsa tugma ko'rinmaydi
+  instagram: '',             // masalan 'shuxratogli'
+  // Yandex Maps JS API v3 kaliti (developer.tech.yandex.ru, bepul; saytning domeniga cheklang).
+  // Bo'sh bo'lsa xarita o'rnida brend kartochkasi turadi.
+  yandexKalit: '',
+  xarita: { lat: 40.6415, lng: 72.2387, zoom: 12 }  // xo'jalikning aniq nuqtasi bilan almashtiring
+};
+
+(function () {
+  var html = document.documentElement;
+
+  // ?toldir — mijozdan keladigan ma'lumot joylarini ko'rsatadi
+  var toldir = /[?&]toldir\b/.test(location.search);
+  if (toldir) html.classList.add('toldir');
+
+  // Ijtimoiy tarmoqlar
+  [['ijt-tg', SOZLAMA.telegram && 'https://t.me/' + SOZLAMA.telegram],
+   ['ijt-ig', SOZLAMA.instagram && 'https://instagram.com/' + SOZLAMA.instagram]].forEach(function (x) {
+    var a = document.querySelector('.' + x[0]);
+    if (!a) return;
+    if (x[1]) { a.href = x[1]; a.hidden = false; }
+    else if (toldir) a.hidden = false;
+  });
+
+  // Ulgurji ariza: matnni tayyorlab, SMS / Telegram / nusxa orqali yuborish
+  var forma = document.getElementById('ariza');
+  if (!forma) return;
+  var xato = forma.querySelector('.ariza-xato');
+  var natija = forma.querySelector('.ariza-natija');
+  var matnQuti = forma.querySelector('.ariza-matn');
+  var sms = forma.querySelector('.ariza-sms');
+  var tg = forma.querySelector('.ariza-tg');
+  var nusxa = forma.querySelector('.ariza-nusxa');
+  var nusxalandi = forma.querySelector('.ariza-nusxalandi');
+
+  function yorliq(el) {
+    var l = el.closest('label');
+    var s = l && l.querySelector('span');
+    return s ? s.textContent.trim() : el.name;
+  }
+
+  forma.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var ism = forma.elements.ism, tel = forma.elements.tel;
+    var telOk = tel.value.replace(/\D/g, '').length >= 9;
+    ism.setAttribute('aria-invalid', String(!ism.value.trim()));
+    tel.setAttribute('aria-invalid', String(!telOk));
+    if (!ism.value.trim() || !telOk) {
+      xato.hidden = false;
+      (!ism.value.trim() ? ism : tel).focus();
+      return;
+    }
+    xato.hidden = true;
+
+    var qatorlar = [forma.querySelector('#ariza-sarlavha').textContent.trim() + ' — Shuxrat oʻgʻli', ''];
+    ['ism', 'tel', 'korxona', 'manzil'].forEach(function (n) {
+      var el = forma.elements[n];
+      if (el.value.trim()) qatorlar.push(yorliq(el) + ': ' + el.value.trim());
+    });
+    var tanlangan = [].slice.call(forma.querySelectorAll('input[name="mahsulot"]:checked'))
+      .map(function (c) { return c.nextElementSibling.textContent.trim(); });
+    if (tanlangan.length) qatorlar.push(forma.querySelector('.tanlov legend').textContent.trim() + ' ' + tanlangan.join(', '));
+    ['hajm', 'izoh'].forEach(function (n) {
+      var el = forma.elements[n];
+      if (el.value.trim()) qatorlar.push(yorliq(el) + ': ' + el.value.trim());
+    });
+    var matn = qatorlar.join('\n');
+
+    matnQuti.textContent = matn;
+    sms.href = 'sms:' + SOZLAMA.telefon + '?body=' + encodeURIComponent(matn);
+    if (SOZLAMA.telegram) {
+      tg.href = 'https://t.me/' + SOZLAMA.telegram + '?text=' + encodeURIComponent(matn);
+      tg.hidden = false;
+    }
+    nusxalandi.hidden = true;
+    natija.hidden = false;
+    natija.focus();
+    natija.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  });
+
+  nusxa.addEventListener('click', function () {
+    var matn = matnQuti.textContent;
+    var tayyor = function () { nusxalandi.hidden = false; };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(matn).then(tayyor, function () { belgila(); });
+    } else belgila();
+    function belgila() {
+      var r = document.createRange(); r.selectNodeContents(matnQuti);
+      var s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      try { document.execCommand('copy'); tayyor(); } catch (e) {}
+    }
+  });
+})();
+
+// Xarita: Yandex (brend ranglarida) yoki kalitsiz brend kartochkasi
+(function () {
+  var quti = document.querySelector('.sotuv-xarita');
+  if (!quti) return;
+  var x = SOZLAMA.xarita;
+  var och = quti.querySelector('.xarita-och'), yol = quti.querySelector('.xarita-yol');
+  if (och) och.href = 'https://yandex.uz/maps/?pt=' + x.lng + ',' + x.lat + '&z=' + (x.zoom + 1) + '&l=map';
+  if (yol) yol.href = 'https://yandex.uz/maps/?rtext=~' + x.lat + ',' + x.lng + '&rtt=auto';
+  if (!SOZLAMA.yandexKalit) return;
+
+  var til = { uz: 'uz_UZ', ru: 'ru_RU', en: 'en_US' }[document.documentElement.lang] || 'ru_RU';
+  var yuklandi = false;
+  function yukla() {
+    if (yuklandi) return; yuklandi = true;
+    var s = document.createElement('script');
+    s.src = 'https://api-maps.yandex.ru/v3/?apikey=' + encodeURIComponent(SOZLAMA.yandexKalit) + '&lang=' + til;
+    s.onload = function () { ymaps3.ready.then(chiz).catch(function () {}); };
+    document.head.appendChild(s);
+  }
+  // xarita faqat ekranga yaqinlashganda yuklanadi
+  if ('IntersectionObserver' in window) {
+    var k = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { k.disconnect(); yukla(); } }, { rootMargin: '400px' });
+    k.observe(quti);
+  } else yukla();
+
+  // Brend ranglari: yer — och kulrang-ko'k, suv — ko'k, katta yo'llar — oltin, ortiqcha belgilar yashirin
+  var USLUB = [
+    { tags: { any: ['landscape'] }, elements: 'geometry', stylers: [{ color: '#EDEFF5' }] },
+    { tags: { any: ['urban_area', 'residential', 'industrial'] }, elements: 'geometry', stylers: [{ color: '#E4E8F2' }] },
+    { tags: { any: ['vegetation', 'park', 'national_park'] }, elements: 'geometry', stylers: [{ color: '#DCE2F0' }] },
+    { tags: { any: ['water'] }, elements: 'geometry', stylers: [{ color: '#9FB1E0' }] },
+    { tags: { any: ['road'] }, elements: 'geometry.fill', stylers: [{ color: '#FFFFFF' }] },
+    { tags: { any: ['road'] }, elements: 'geometry.outline', stylers: [{ color: '#D3D8E6' }] },
+    { tags: { any: ['road_1', 'road_2', 'road_3'] }, elements: 'geometry.fill', stylers: [{ color: '#E2BF8C' }] },
+    { tags: { any: ['road_1', 'road_2', 'road_3'] }, elements: 'geometry.outline', stylers: [{ color: '#C99A5B' }] },
+    { tags: { any: ['structure'] }, elements: 'geometry', stylers: [{ color: '#DDE1EC' }] },
+    { tags: { any: ['poi', 'transit'] }, stylers: [{ visibility: 'off' }] },
+    { tags: { any: ['admin', 'road'] }, elements: 'label.text.fill', stylers: [{ color: '#1E3782' }] },
+    { tags: { any: ['admin', 'road'] }, elements: 'label.text.outline', stylers: [{ color: '#FFFFFF' }] }
+  ];
+
+  function chiz() {
+    var Y = ymaps3;
+    var el = document.createElement('div');
+    el.className = 'xarita-jonli';
+    quti.appendChild(el);
+    var map = new Y.YMap(el, {
+      location: { center: [x.lng, x.lat], zoom: x.zoom },
+      mode: 'vector',
+      behaviors: ['drag', 'pinchZoom', 'dblClick']  // sahifa aylantirilganda xarita kattalashmasin
+    });
+    map.addChild(new Y.YMapDefaultSchemeLayer({ customization: USLUB }));
+    map.addChild(new Y.YMapDefaultFeaturesLayer());
+    var belgi = document.createElement('div');
+    belgi.className = 'xarita-belgi';
+    belgi.innerHTML = '<img src="' + quti.querySelector('.xarita-nuqta img').getAttribute('src') + '" alt="">';
+    map.addChild(new Y.YMapMarker({ coordinates: [x.lng, x.lat] }, belgi));
+    var a = document.createElement('a');
+    a.className = 'xarita-ochish'; a.href = och.href; a.target = '_blank'; a.rel = 'noopener';
+    a.textContent = och.textContent;
+    quti.appendChild(a);
+    quti.classList.add('jonli');
+  }
+})();
