@@ -426,16 +426,12 @@ a { color: inherit; }
 .xarita-yol { border: 2px solid rgba(255,255,255,.45); color: var(--oq); }
 .xarita-yol:hover { border-color: var(--oltin); color: var(--oltin); }
 .xarita-jonli { position: absolute; inset: 0; }
-.xarita-belgi {
-  display: grid; place-items: center; width: 54px; height: 54px;
-  background: var(--kok); border: 3px solid var(--oltin);
-  border-radius: 50% 50% 50% 4px; transform: translate(-50%, -100%) rotate(-45deg);
-  box-shadow: 0 10px 20px -6px rgba(0,0,0,.45);
-}
-.xarita-belgi img { width: 28px; transform: rotate(45deg); }
 .sotuv-xarita.jonli .xarita-karta { display: none; }
+.sotuv-xarita [class*="-ground-pane"] { filter: url(#xarita-brend); }   /* Yandex qatlami brend ranglarida */
+.sotuv-xarita [class*="-map-copyrights-promo"] { display: none; }        /* «Yandex Xaritada ochish» — o'rniga o'z tugmamiz */
+
 .xarita-ochish {
-  position: absolute; left: 14px; top: 14px; z-index: 2;
+  position: absolute; right: 14px; top: 14px; z-index: 2;
   background: var(--oq); color: var(--kok); font-weight: 700; font-size: 14px;
   padding: 8px 14px; border-radius: 999px; text-decoration: none;
   box-shadow: 0 6px 16px -6px rgba(0,0,0,.35);

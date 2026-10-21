@@ -45,9 +45,10 @@ var SOZLAMA = {
   telefon: '+998990575335',  // SMS va qo'ng'iroq uchun
   telegram: '',              // masalan 'shuxratogli' (@ belgisisiz) — bo'sh bo'lsa tugma ko'rinmaydi
   instagram: '',             // masalan 'shuxratogli'
-  // Yandex Maps JS API v3 kaliti (developer.tech.yandex.ru, bepul; saytning domeniga cheklang).
+  // Yandex Maps JS API 2.1 kaliti («JavaScript API и HTTP Геокодер», developer.tech.yandex.ru).
+  // Kalit sahifa kodida ochiq turadi — Yandex kabinetida uni sayt domeniga cheklang.
   // Bo'sh bo'lsa xarita o'rnida brend kartochkasi turadi.
-  yandexKalit: '',
+  yandexKalit: '868c338e-c07c-4bf9-9adc-8f86a7625381',
   xarita: { lat: 40.6415, lng: 72.2387, zoom: 12 }  // xo'jalikning aniq nuqtasi bilan almashtiring
 };
 
@@ -147,13 +148,14 @@ var SOZLAMA = {
   if (yol) yol.href = 'https://yandex.uz/maps/?rtext=~' + x.lat + ',' + x.lng + '&rtt=auto';
   if (!SOZLAMA.yandexKalit) return;
 
-  var til = { uz: 'uz_UZ', ru: 'ru_RU', en: 'en_US' }[document.documentElement.lang] || 'ru_RU';
+  var til = { uz: 'uz_UZ', ru: 'ru_RU', en: 'en_US' }[document.documentElement.lang] || 'uz_UZ';
+  var pin = quti.querySelector('.xarita-nuqta img').getAttribute('src').replace('belgi.svg', 'xarita-nuqta.svg');
   var yuklandi = false;
   function yukla() {
     if (yuklandi) return; yuklandi = true;
     var s = document.createElement('script');
-    s.src = 'https://api-maps.yandex.ru/v3/?apikey=' + encodeURIComponent(SOZLAMA.yandexKalit) + '&lang=' + til;
-    s.onload = function () { ymaps3.ready.then(chiz).catch(function () {}); };
+    s.src = 'https://api-maps.yandex.ru/2.1/?apikey=' + encodeURIComponent(SOZLAMA.yandexKalit) + '&lang=' + til;
+    s.onload = function () { ymaps.ready(chiz); };
     document.head.appendChild(s);
   }
   // xarita faqat ekranga yaqinlashganda yuklanadi
@@ -162,38 +164,17 @@ var SOZLAMA = {
     k.observe(quti);
   } else yukla();
 
-  // Brend ranglari: yer — och kulrang-ko'k, suv — ko'k, katta yo'llar — oltin, ortiqcha belgilar yashirin
-  var USLUB = [
-    { tags: { any: ['landscape'] }, elements: 'geometry', stylers: [{ color: '#EDEFF5' }] },
-    { tags: { any: ['urban_area', 'residential', 'industrial'] }, elements: 'geometry', stylers: [{ color: '#E4E8F2' }] },
-    { tags: { any: ['vegetation', 'park', 'national_park'] }, elements: 'geometry', stylers: [{ color: '#DCE2F0' }] },
-    { tags: { any: ['water'] }, elements: 'geometry', stylers: [{ color: '#9FB1E0' }] },
-    { tags: { any: ['road'] }, elements: 'geometry.fill', stylers: [{ color: '#FFFFFF' }] },
-    { tags: { any: ['road'] }, elements: 'geometry.outline', stylers: [{ color: '#D3D8E6' }] },
-    { tags: { any: ['road_1', 'road_2', 'road_3'] }, elements: 'geometry.fill', stylers: [{ color: '#E2BF8C' }] },
-    { tags: { any: ['road_1', 'road_2', 'road_3'] }, elements: 'geometry.outline', stylers: [{ color: '#C99A5B' }] },
-    { tags: { any: ['structure'] }, elements: 'geometry', stylers: [{ color: '#DDE1EC' }] },
-    { tags: { any: ['poi', 'transit'] }, stylers: [{ visibility: 'off' }] },
-    { tags: { any: ['admin', 'road'] }, elements: 'label.text.fill', stylers: [{ color: '#1E3782' }] },
-    { tags: { any: ['admin', 'road'] }, elements: 'label.text.outline', stylers: [{ color: '#FFFFFF' }] }
-  ];
-
   function chiz() {
-    var Y = ymaps3;
     var el = document.createElement('div');
     el.className = 'xarita-jonli';
     quti.appendChild(el);
-    var map = new Y.YMap(el, {
-      location: { center: [x.lng, x.lat], zoom: x.zoom },
-      mode: 'vector',
-      behaviors: ['drag', 'pinchZoom', 'dblClick']  // sahifa aylantirilganda xarita kattalashmasin
-    });
-    map.addChild(new Y.YMapDefaultSchemeLayer({ customization: USLUB }));
-    map.addChild(new Y.YMapDefaultFeaturesLayer());
-    var belgi = document.createElement('div');
-    belgi.className = 'xarita-belgi';
-    belgi.innerHTML = '<img src="' + quti.querySelector('.xarita-nuqta img').getAttribute('src') + '" alt="">';
-    map.addChild(new Y.YMapMarker({ coordinates: [x.lng, x.lat] }, belgi));
+    var map = new ymaps.Map(el, { center: [x.lat, x.lng], zoom: x.zoom, controls: ['zoomControl'] },
+      { suppressMapOpenBlock: true, yandexMapDisablePoiInteractivity: true });
+    map.behaviors.disable('scrollZoom');  // sahifa aylantirilganda xarita kattalashmasin
+    map.geoObjects.add(new ymaps.Placemark([x.lat, x.lng], {}, {
+      iconLayout: 'default#image', iconImageHref: pin,
+      iconImageSize: [48, 60], iconImageOffset: [-24, -60]
+    }));
     var a = document.createElement('a');
     a.className = 'xarita-ochish'; a.href = och.href; a.target = '_blank'; a.rel = 'noopener';
     a.textContent = och.textContent;
