@@ -33,7 +33,7 @@
       html.classList.add('kirish-tugadi');
       setTimeout(function () { kirish.remove(); }, 700);
     };
-    setTimeout(tugat, 3550);
+    setTimeout(tugat, 3800);
     ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (t) {
       window.addEventListener(t, tugat, { once: true, passive: true });
     });
