@@ -647,6 +647,7 @@ html.kirish-bor:not(.kirish-tugadi) .bosh * ,
 html.kirish-bor:not(.kirish-tugadi) .bosh-taroq svg { animation-play-state: paused; }
 .kirish-logo { width: min(52vw, 18.75rem); height: auto; overflow: visible; }
 .kirish-logo * { transform-box: fill-box; }
+.kirish-logo defs * { transform-box: view-box; } /* defs dagi transform atributlari o'z koordinatasida qolsin (Safari) */
 
 .k-chiz { stroke-dasharray: 1; stroke-dashoffset: 1; animation: k-chiz .95s .15s cubic-bezier(.55,.1,.35,1) forwards; }
 .k-toj { transform-origin: 50% 100%; transform: scale(0); animation: k-toj .5s cubic-bezier(.3,1.5,.5,1) forwards; animation-delay: calc(1.05s + var(--i) * .07s); }
