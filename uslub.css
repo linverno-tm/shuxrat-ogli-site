@@ -85,6 +85,7 @@ a { color: inherit; }
   max-width: var(--kenglik); margin: 0 auto; padding: 0.875rem var(--chet);
   display: flex; align-items: center; gap: 1.75rem;
 }
+.logo { flex: none; }
 .logo img { height: 2.125rem; width: auto; }
 .menyu { display: flex; gap: 1.625rem; margin-left: auto; }
 .menyu a { text-decoration: none; font-weight: 600; font-size: 1rem; color: var(--matn); padding: 0.375rem 0; }
@@ -459,7 +460,36 @@ a { color: inherit; }
 .bosh-imzo { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
 .bosh-imzo::before { content: ""; width: 2.5rem; height: 3px; border-radius: 3px; background: var(--oltin); }
 .bosh-imzo img { height: 0.95rem; width: auto; }
-.haqida-baraka { margin-top: 1rem; padding: 1rem 1.25rem; border-left: 4px solid var(--oltin); background: var(--oq); border-radius: 0 0.875rem 0.875rem 0; color: var(--kok) !important; font-weight: 600; }
+
+/* Brend ortida: «Baraka hamkor parranda» */
+.ortida { position: relative; background: var(--kok); color: var(--oq); padding: clamp(4.5rem, 8vw, 7rem) 0 clamp(3.5rem, 6vw, 5rem); margin-top: -2.5rem; overflow: hidden; }
+.ortida::before {
+  /* muqovadagi oltin yoy — o'ng tomondan */
+  content: ""; position: absolute; right: -12rem; top: -10rem; width: 34rem; aspect-ratio: 1;
+  border-radius: 50%; border: 0.75rem solid rgba(210, 163, 102, .35);
+}
+.ortida-ichi { position: relative; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+.ortida-logo img { width: 100%; max-width: 22rem; height: auto; }
+.ortida h2 { color: var(--oq); font-size: clamp(2rem, 3.6vw, 3rem); }
+.ortida h2 span { display: block; }
+.ortida-nom { color: var(--oltin); }
+.ortida-matn > p { margin: 1.25rem 0 1.75rem; max-width: 50ch; color: rgba(255,255,255,.85); font-size: 1.1875rem; }
+.ortida-faktlar { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.875rem 1.75rem; }
+.ortida-faktlar li { display: flex; align-items: center; gap: 0.625rem; color: rgba(255,255,255,.85); font-size: 1rem; }
+.ortida-faktlar b { color: var(--oq); }
+.ortida-faktlar .ik { width: 1.625rem; height: 1.625rem; }
+.sarlavha-imzo b { color: var(--kok); font-weight: 700; }
+.sarlavha-imzo:hover b { color: var(--oltin-toq); }
+.logo-blok { flex: none; display: flex; flex-direction: column; gap: 0.2rem; }
+.sarlavha-imzo { font-size: 0.6875rem; letter-spacing: 0.01em; color: var(--xira); text-decoration: none; white-space: nowrap; line-height: 1; padding-left: 2.6rem; }
+@media (max-width: 820px) { .sarlavha-imzo { padding-left: 2.3rem; font-size: 0.625rem; } }
+@media (max-width: 820px) {
+  .ortida { margin-top: -1.5rem; }
+  .ortida-ichi { grid-template-columns: minmax(0, 1fr); }
+  .ortida-logo img { max-width: 13rem; }
+  .ortida h2 { font-size: 1.75rem; }
+  .ortida-faktlar { flex-direction: column; }
+}
 
 /* Kompyuterdagi qo'ng'iroq oynasi */
 .qongiroq-oyna {
@@ -524,7 +554,7 @@ html.toldir .toldir-belgi { display: block; }
 
 /* Menyu: planshetda ham yig'ma (ruscha so'zlar uzun) */
 .menyu a { white-space: nowrap; }
-@media (max-width: 1100px) {
+@media (max-width: 1320px) {
   .sarlavha-ichi { gap: 0.75rem; }
   .tel-tugma { margin-left: auto; }
   .menyu-tugma {
