@@ -663,3 +663,10 @@ html.kirish-bor:not(.kirish-tugadi) .bosh-taroq svg { animation-play-state: paus
 
 html.kirish-tugadi .kirish { animation: k-ket .6s cubic-bezier(.7,0,.2,1) forwards; pointer-events: none; }
 @keyframes k-ket { to { clip-path: inset(0 0 100% 0); } }
+
+/* Logo ostidagi «by «Baraka hamkor parranda»» imzosi */
+.logo-blok { flex: none; display: flex; flex-direction: column; gap: 0.2rem; }
+.sarlavha-imzo { font-size: 0.6875rem; letter-spacing: 0.01em; color: var(--xira); text-decoration: none; white-space: nowrap; line-height: 1; padding-left: 2.6rem; }
+.sarlavha-imzo b { color: var(--kok); font-weight: 700; }
+.sarlavha-imzo:hover b { color: var(--oltin-toq); }
+@media (max-width: 820px) { .sarlavha-imzo { padding-left: 2.3rem; font-size: 0.625rem; } }
